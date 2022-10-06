@@ -86,6 +86,28 @@ export class MenuItemsService {
     ]
   */
   async getMenuItems() {
-    throw new Error('TODO in task 3');
+    const allMenuItems = await this.menuItemRepository.find({
+      relations: ['children'],
+    });
+    if (allMenuItems.length) {
+      return allMenuItems.map((menuItem) =>
+        this.generateMenuItemResponse(menuItem),
+      );
+    }
+    return [];
+  }
+
+  generateMenuItemResponse(menuItem: MenuItem): any {
+    const { id, name, url, parentId, createdAt, children } = menuItem;
+    return {
+      id,
+      name,
+      url,
+      parentId,
+      createdAt,
+      children: children.length
+        ? children.map((child) => this.generateMenuItemResponse(child))
+        : [],
+    };
   }
 }

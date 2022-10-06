@@ -23,9 +23,9 @@ export class MenuItem {
   @Column({ type: 'datetime' })
   createdAt: string;
 
-  @ManyToOne(() => MenuItem, (menuItem) => menuItem.childMenuItems)
+  @ManyToOne(() => MenuItem, (menuItem) => menuItem.children)
   parentMenuItem: MenuItem;
 
   @OneToMany(() => MenuItem, (menuItem) => menuItem.parentMenuItem)
-  childMenuItems: MenuItem[];
+  children: MenuItem[];
 }
