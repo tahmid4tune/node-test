@@ -1,13 +1,16 @@
-import { Repository } from 'typeorm';
+import { In, MoreThan, Repository } from 'typeorm';
 import { Get, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Event } from './entities/event.entity';
+import { Workshop } from './entities/workshop.entity';
 
 @Injectable()
 export class EventsService {
   constructor(
     @InjectRepository(Event)
     private eventRepository: Repository<Event>,
+    @InjectRepository(Workshop)
+    private workshopRepository: Repository<Workshop>,
   ) {}
 
   getWarmupEvents() {
@@ -92,8 +95,8 @@ export class EventsService {
      */
 
   @Get('events')
-  async getEventsWithWorkshops() {
-    throw new Error('TODO task 1');
+  async getEventsWithWorkshops(): Promise<Event[]> {
+    return await this.eventRepository.find({ relations: ['workshops'] });
   }
 
   /* TODO: complete getFutureEventWithWorkshops so that it returns events with workshops, that have not yet started
@@ -164,6 +167,17 @@ export class EventsService {
      */
   @Get('futureevents')
   async getFutureEventWithWorkshops() {
-    throw new Error('TODO task 2');
+    const futureWorkshops = await this.workshopRepository.find({
+      relations: ['event'],
+      where: { start: MoreThan(new Date()) },
+    });
+    if (futureWorkshops.length) {
+      return await this.eventRepository.find({
+        relations: ['workshops'],
+        where: {
+        id: In(futureWorkshops.map((futureWorkshop) => futureWorkshop.eventId))
+      }});
+    }
+    return [];
   }
 }
