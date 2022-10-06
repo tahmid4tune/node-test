@@ -10,7 +10,7 @@ export class Event {
   name: string;
 
   @Column({ type: 'datetime' })
-  createdAt: string;
+  createdAt: Date;
 
   @OneToMany(() => Workshop, (workshop) => workshop.eventId)
   workshops!: Workshop[];
