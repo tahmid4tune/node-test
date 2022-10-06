@@ -175,8 +175,11 @@ export class EventsService {
       return await this.eventRepository.find({
         relations: ['workshops'],
         where: {
-        id: In(futureWorkshops.map((futureWorkshop) => futureWorkshop.eventId))
-      }});
+          id: In(
+            futureWorkshops.map((futureWorkshop) => futureWorkshop.eventId),
+          ),
+        },
+      });
     }
     return [];
   }
